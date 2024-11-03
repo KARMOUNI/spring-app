@@ -4,11 +4,13 @@ import com.practice.quiz.model.*;
 import com.practice.quiz.repository.QuestionRepo;
 import com.practice.quiz.repository.QuizRepo;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizService {
@@ -28,7 +30,24 @@ public class QuizService {
     }
 
     public void addQuiz(Quiz quiz) {
-       quizRepo.save(quiz);
+        // Récupère les questions existantes ou sauvegarde les nouvelles questions
+        List<Question> questions = quiz.getQuestions().stream()
+                .map(question -> {
+                    // Cherche la question dans la base de données par ID (si fourni) ou par texte (pour éviter les doublons)
+                    if (question.getQuestionId() != null && questionRepo.existsById(question.getQuestionId())) {
+                        return questionRepo.findById(question.getQuestionId()).orElse(question);
+                    } else {
+                        // Sauvegarde une nouvelle question si elle n'existe pas
+                        return questionRepo.save(question);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        // Associe les questions récupérées ou sauvegardées au quiz
+        quiz.setQuestions(questions);
+
+        // Sauvegarde le quiz
+        quizRepo.save(quiz);
     }
 
     public long createQuiz(String quizName, int noOfQuestions, String category) {
