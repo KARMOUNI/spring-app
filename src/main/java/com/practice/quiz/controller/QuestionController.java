@@ -24,7 +24,7 @@ public class QuestionController {
 
     @GetMapping("/{questionId}")
     public ResponseEntity<Question> getQuestion(@PathVariable long questionId) {
-        return new ResponseEntity<>(service.getQuestion(questionId),HttpStatus.FOUND);
+        return new ResponseEntity<>(service.getQuestion(questionId),HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -34,7 +34,7 @@ public class QuestionController {
 
     @GetMapping("category/{category}")
     public ResponseEntity<List<Question>> getByCategory(@PathVariable String category) {
-        return new ResponseEntity<>(service.getByCategory(Category.valueOf(category.toUpperCase())),HttpStatus.FOUND);
+        return new ResponseEntity<>(service.getByCategory(Category.valueOf(category.toUpperCase())),HttpStatus.OK);
     }
 
     @PutMapping("/{questionId}")

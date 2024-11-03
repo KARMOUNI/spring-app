@@ -1,6 +1,7 @@
 package com.practice.quiz.controller;
 
 import com.practice.quiz.model.QuestionWrapper;
+import com.practice.quiz.model.Quiz;
 import com.practice.quiz.model.QuizResponse;
 import com.practice.quiz.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,33 @@ public class QuizController {
     @Autowired
     private QuizService service;
 
+    /* GET List QUIZ*/
+    @GetMapping("/all")
+    public ResponseEntity<List<Quiz>> getAll() {
+        return new ResponseEntity<>(service.getAll(),HttpStatus.OK);
+    }
+    /* Get QUIZ*/
+    @GetMapping("/{quizId}")
+    public ResponseEntity<Quiz> getQuiz(@PathVariable long quizId) {
+        return new ResponseEntity<>(service.getQuiz(quizId),HttpStatus.OK);
+    }
+    /* NEW QUIZ*/
+     @PostMapping("/new")
+    public ResponseEntity<String> addQuiz(@RequestBody Quiz quiz) {
+        service.addQuiz(quiz);
+        return new ResponseEntity<>("Quiz Added", HttpStatus.CREATED);
+    }
+
+    /* Get Questions Of Quiz By Id*/
+    @GetMapping("/questionofquiz/{quizId}")
+    public ResponseEntity<List<QuestionWrapper>> getQuestionOfQuiz(@PathVariable long quizId) {
+        return new ResponseEntity<>(service.getQuestionOfQuiz(quizId), HttpStatus.OK);
+    }
+
     @PostMapping("/{quizName}/{category}/{noOfQuestions}")
     public ResponseEntity<String> createQuiz(@PathVariable String quizName,@PathVariable String category,@PathVariable int noOfQuestions) {
         long quizId = service.createQuiz(quizName,noOfQuestions,category);
         return new ResponseEntity<>("Quiz : "+quizName+" Created with Quiz Id : "+quizId, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{quizId}")
-    public ResponseEntity<List<QuestionWrapper>> getQuiz(@PathVariable long quizId) {
-        return new ResponseEntity<>(service.getQuiz(quizId), HttpStatus.FOUND);
     }
 
     @PostMapping("/submit/{quizId}")

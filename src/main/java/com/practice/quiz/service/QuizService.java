@@ -18,14 +18,21 @@ public class QuizService {
     private QuestionRepo questionRepo;
 
 
+    public List<Quiz> getAll() {
+        return quizRepo.findAll();
+    }
 
+    public Quiz getQuiz(long quizId) {
+        return quizRepo.findById(quizId)
+                .orElseThrow(() -> new EntityNotFoundException("Quiz With quizId : "+quizId+" Not Found"));
+    }
 
-
+    public void addQuiz(Quiz quiz) {
+       quizRepo.save(quiz);
+    }
 
     public long createQuiz(String quizName, int noOfQuestions, String category) {
-
         List<Question> questions = questionRepo.findRandomQuestionsByCategory(Category.valueOf(category.toUpperCase()),noOfQuestions);
-
         Quiz quiz = new Quiz();
         quiz.setQuizName(quizName);
         quiz.setQuestions(questions);
@@ -33,7 +40,7 @@ public class QuizService {
         return quizRepo.save(quiz).getQuizId();
     }
 
-    public List<QuestionWrapper> getQuiz(long quizId) {
+    public List<QuestionWrapper> getQuestionOfQuiz(long quizId) {
         //Checking Quiz is Present with quizId
         Quiz quiz = quizRepo.findById(quizId)
                 .orElseThrow(() -> new EntityNotFoundException("Quiz With QuizId : "+quizId+" Not Found"));
