@@ -17,6 +17,7 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long quizId;
     private String quizName;
+    private String quizDescription;
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Question> questions;
 
